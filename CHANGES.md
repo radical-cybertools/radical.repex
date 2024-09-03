@@ -7,10 +7,16 @@
             issues?q=is%3Aissue+is%3Aopen+
 
 
-1.63.0 Release                                                        2024-07-25
+1.80.0 Release                                                        2024-09-03
 --------------------------------------------------------------------------------
 
-  - maintenance release, consolidate devel strands
+  - maintenance release
+
+
+1.63.0 Release                                                        2024-09-03
+--------------------------------------------------------------------------------
+
+  - consolidate devel strands
 
 
 1.61.0 Release                                                        2024-07-25
@@ -103,3 +109,4 @@ Version 0.0.1 release                                                 2014-10-31
 
 --------------------------------------------------------------------------------
 
+  - (HEAD -> master, origin/devel, origin/HEAD, devel) devel version bump
