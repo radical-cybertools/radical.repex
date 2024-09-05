@@ -7,6 +7,12 @@
             issues?q=is%3Aissue+is%3Aopen+
 
 
+1.82.0 Release                                                        2024-09-04
+--------------------------------------------------------------------------------
+
+  - fix version tool
+
+
 1.81.0 Release                                                        2024-09-03
 --------------------------------------------------------------------------------
 
@@ -109,5 +115,3 @@ Version 0.0.1 release                                                 2014-10-31
 
 --------------------------------------------------------------------------------
 
-  - (HEAD -> master, origin/devel, origin/HEAD, devel) devel version bump
-  - (HEAD -> master, origin/devel, origin/HEAD, devel) devel version bump
