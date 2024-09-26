@@ -46,12 +46,18 @@ def prepare_md(wl):
             tbuffer  = tbuffer.replace('@temperature@', str(temp))
             tbuffer  = tbuffer.replace('@timesteps@',   str(nsteps))
 
-        fname = '%s/mdin.rep.%04d' % (inputs, i)
+       #fname = '%s/mdin.rep.%04d' % (inputs, i)
+       #mdp extension just for gromacs 
+       #change accordingly for other md executables
+        fname = '%s/mdin.mdp.rep.%04d' % (inputs, i)
         with open(fname, 'w') as fout:
             fout.write(tbuffer)
 
-        os.system('cp %s/inpcrd %s/inpcrd.rep.%04d' % (bname, inputs, i))
-
+        #os.system('cp %s/inpcrd %s/inpcrd.rep.%04d' % (bname, inputs, i))
+        #mdp extension just for gromacs
+        #change accordingly for other md executables
+         os.system('cp %s/inpcrd %s/inpcrd.gro.rep.%04d' % (bname, inputs, i))
+    
     # `inputs` should be staged as `shared_data`
     return inputs
 
