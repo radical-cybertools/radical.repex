@@ -109,31 +109,34 @@ class Replica(re.Pipeline):
                          'task://', self.rid, self.cycle)
         else:
             # get data from previous task
-            t = last_task(self)
+            prev = last_task(self)
+
             if exchanged_from:
+                # we get data via and exchange step, i.e. from anoth replica
                 self._log.debug('Exchange from %s', exchanged_from.name)
                 link_inputs += expand_ln(self._workload.md.ex_2_md,
                         'pilot:///%s' % (exchanged_from.sandbox),
                         'task://', self.rid, self.cycle)
             else:
-                # FIXME: this apparently can't happen
+                # we get data from the previous task of the same replica
                 link_inputs += expand_ln(self._workload.md.md_2_md,
-                         'resource:///%s' % (t.sandbox),
+                         'resource:///%s' % (prev.sandbox),
                          'task://',
                          self.rid, self.cycle)
 
+        # copy outputs for all cycles
         copy_outputs = expand_ln(self._workload.md.outputs,
                          'task://',
                          'client:///%s' % self._workload.data.outputs,
                          self.rid, self.cycle)
 
+        # copy additional outputs for last cycle
         if last:
             copy_outputs += expand_ln(self._workload.md.outputs_n,
                          'task://',
                          'client:///%s' % self._workload.data.outputs,
                          self.rid, self.cycle)
 
-        # TODO: filter out custom keys from that dict before deepcopy
         env   = {'REPEX_RID'   : str(self.rid),
                  'REPEX_CYCLE' : str(self.cycle)}
         tds   = copy.deepcopy(self._workload['md']['descriptions'])
@@ -173,19 +176,6 @@ class Replica(re.Pipeline):
 
     # --------------------------------------------------------------------------
     #
-    def check_exchange(self):
-        '''
-        after an md cycle, record its completion and check for exchange
-        '''
-
-        self._prof.prof('chk_ex_start', uid=self.rid)
-        self._log.debug('%5s check_exchange %s', self.rid, self._uid)
-        self._check_ex(self)
-        self._prof.prof('chk_ex_stop', uid=self.rid)
-
-
-    # --------------------------------------------------------------------------
-    #
     def add_ex_stage(self, exchange_list, ex_alg, sid):
 
         self._prof.prof('add_ex_start', uid=self.rid)
@@ -210,14 +200,14 @@ class Replica(re.Pipeline):
         # link exchange data
         for r in exchange_list:
 
-            t = last_task(r)
+            prev = last_task(r)
             self._log.debug('Exchage: %s, Task Name: %s Sandbox %s', r.name,
-                             t.name, t.sandbox)
+                             prev.name, prev.sandbox)
             link_inputs += expand_ln(self._workload.exchange.md_2_ex,
                                      # FIXME: how to get absolute task sbox?
                                      #        rep.0000.0000:/// ...
                                      #        i.e., use task ID as schema
-                                     'pilot:///%s' % t.sandbox,
+                                     'pilot:///%s' % prev.sandbox,
                                      'task://', r.rid, r.cycle)
 
         task.link_input_data = link_inputs
@@ -234,6 +224,19 @@ class Replica(re.Pipeline):
 
         self.add_stages(stage)
         self._prof.prof('add_ex_stop', uid=self.rid)
+
+
+    # --------------------------------------------------------------------------
+    #
+    def check_exchange(self):
+        '''
+        after an md cycle, record its completion and check for exchange
+        '''
+
+        self._prof.prof('chk_ex_start', uid=self.rid)
+        self._log.debug('%5s check_exchange %s', self.rid, self._uid)
+        self._check_ex(self)
+        self._prof.prof('chk_ex_stop', uid=self.rid)
 
 
     # --------------------------------------------------------------------------

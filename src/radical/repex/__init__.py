@@ -13,7 +13,6 @@ import radical.utils as _ru
 #
 from .replica    import Replica
 from .exchange   import Exchange
-from .algorithms import *
 
 
 # ------------------------------------------------------------------------------

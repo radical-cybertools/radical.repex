@@ -36,6 +36,8 @@ Documentation can be found at: https://repex-30.readthedocs.io/en/latest/
 
 
 Run the base example as follows:
+
 ```
-bin/repex examples/workload_test.json examples/resource_local.json
+bin/radical-repex examples/workload_test.json examples/resource_local.json
 ```
+

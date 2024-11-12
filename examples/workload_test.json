@@ -1,0 +1,114 @@
+
+{
+    "config" : {
+        "min_temp"       : 300,
+        "max_temp"       : 400,
+        "timesteps"      : 10,
+        "replicas"       : 128,
+        "cycles"         : 2
+    },
+
+    "data" : {
+        "inputs"         : "inputs/",
+        "outputs"        : "outputs/"
+    },
+
+    # workload preparation, i.e., the setup of the input files etc.
+    "prepare"            : {
+        "algorithm"      : "examples/workload_md.py:prepare_md",
+        "basename"       : "tests/ace-ala/"
+    },
+
+    # this section defined the science workload, i.e., the MD steps
+    "md" : {
+            # an MD stage needs the inputs listed here.  Specifically, the
+            # inputs to MD step N in Replica X are sym-linked from a previous
+            # MD step N-1 but from a *different* replica Y.  The echange
+            # pairing [X|Y] is defined at runtime the the selection algorythm.
+            #
+            # NOTE: The placeholder `%(rid)s` is replaced by the replica ID for
+            #       replica *Y*, i.e., the source replica.
+            "inputs" : ["mdin.mdp.%(rid)s > mdin.mdp",
+                        "sys.top          > sys.top",
+                        "sys.itp          > sys.itp",
+                        "inp.ener         > inp.ener",
+                        "martini_v2.2.itp > martini_v2.2.itp"],
+
+            # The first MD step does not have a previous MD step to link from,
+            # and thus we specify in `inputs_0` the inputs to the first MD step.
+            #                    inputs             > cycle 0
+            "inputs_0"       : ["inpcrd.gro.%(rid)s > inpcrd.gro"],
+
+            # link back output from *all* cycles
+            "outputs"        : ["outcrd.gro         > outcrd.gro.%(rid)s.%(cycle)04d"],
+
+            # only staged back from last cycle (n/a)
+            "outputs_n"      : ["outcrd.gro         > outcrd.gro.%(rid)s.last"],
+
+            # Tasks to run for each MD step in the pipelint
+            "descriptions"   : [{
+                                   "executable"     : "sleep 5; echo",
+                                   "arguments"      : [ "grompp",
+                                                       "-f", "mdin.mdp",
+                                                       "-c", "inpcrd.gro",
+                                                       "-o", "sys.tpr",
+                                                       "-p", "sys.top"
+                                                      ],
+                                   "cpu_reqs"       : {"cpu_processes"    : 1,
+                                                       "cpu_threads"      : 1,
+                                                       "cpu_thread_type"  : null,
+                                                       "cpu_process_type" : "MPI"
+                                                      },
+                                   "pre_exec"       : ["sleep 5; echo module load gromacs/2020.2-cpu",
+                                                       "export GMX_MAXBACKUP=-1"]
+
+                                },
+                                {
+                                    "executable"     : "sleep 5; echo gmx_mpi",
+                                    "arguments"      : [ "mdrun",
+                                                        "-s",      "sys.tpr",
+                                                        "-deffnm", "sys",
+                                                        "-c",      "outcrd.gro",
+                                                        "-e",      "sys.edr"
+
+                                                       ],
+                                    "cpu_reqs"       : {"cpu_processes"    : 4,
+                                                        "cpu_threads"      : 1,
+                                                        "cpu_thread_type"  : null,
+                                                        "cpu_process_type" : "MPI"
+                                                       },
+                                    "pre_exec"       : ["sleep 5; echo module load gromacs/2020.2-cpu",
+                                                        "export GMX_MAXBACKUP=-1"]
+                                },
+                                {
+                                    "executable"     : "sleep 5; echo gmx_mpi",
+                                    "arguments"      : [ "energy",
+                                                        "-f", "sys.edr",
+                                                        "-b", 0.25,
+                                                        "<", "inp.ener", ">",
+                                                        "mdinfo"
+                                                       ],
+                                    "cpu_reqs"       : {"cpu_processes"    : 1,
+                                                        "cpu_threads"      : 1,
+                                                        "cpu_thread_type"  : null,
+                                                        "cpu_process_type" : "MPI"
+                                                       },
+                                    "pre_exec"       : ["sleep 5; echo module load gromacs/2020.2-cpu",
+                                                        "export GMX_MAXBACKUP=-1"],
+                                    "post_exec"      : ["touch outcrd.gro",
+                                                        "touch mdinfo"]
+                                }]},
+
+    "selection" : {
+        "algorithm"      : "examples/algorithm_select_random.py:select_by_random",
+        "exchange_size"  : 8
+    },
+
+    "exchange" : {
+        "algorithm"      : "examples/algorithm_exchange_random.py:exchange_by_random",
+        "md_2_ex"        : ["mdinfo  > mdinfo.%(rid)s",
+                            "outcrd.gro  > outcrd.gro.%(rid)s"],
+        "ex_data"        : ["outcrd.gro.%(rid)s"]
+    }
+}
+
