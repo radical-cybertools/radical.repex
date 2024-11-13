@@ -262,7 +262,7 @@ class Exchange(re.AppManager):
         # given replica.
         #
         # For all replicas which participated in the exchange,
-        # add a new md stage for them and resume them (do not resumt *this*
+        # add a new md stage for them and resume them (do not resume *this*
         # replica, as it is obviously running).
 
         self._dump()
