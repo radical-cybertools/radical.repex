@@ -92,3 +92,4 @@ $ tail -F dump.log
  |  126.45 |-|||||||||||||||||||-||||||||||||
  ```
 
+ More detailed log traces can be found in `radical.repex.log`.

@@ -12,13 +12,13 @@ def select_by_random(waitlist, selection, replica):
     '''
 
     # check if size of wait list suffices
-    if len(waitlist) < criteria.exchange_size:
+    if len(waitlist) < selection.exchange_size:
         return [], waitlist
 
     # we have enough replicas.  Consider all to be exchange candidates and
     # select a subset (try until the active replica is included)
     while True:
-        ret = random.sample(waitlist, criteria.exchange_size)
+        ret = random.sample(waitlist, selection.exchange_size)
         if replica in ret:
             break
 
