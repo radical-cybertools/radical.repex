@@ -3,9 +3,9 @@
     "config" : {
         "min_temp"       : 300,
         "max_temp"       : 400,
-        "timesteps"      : 10,
-        "replicas"       : 128,
-        "cycles"         : 2
+        "timesteps"      :  10,
+        "replicas"       :  32,
+        "cycles"         :   3
     },
 
     "data" : {
