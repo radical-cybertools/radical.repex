@@ -14,6 +14,10 @@ def exchange_by_random(rid, cycle, ex_list, ex_data):
 
     We select random pairs of replicas from the replica list and pairwise
     exchange the file content of their `mdin` and `inpcrd` files
+
+
+    candidate 1: rep.0003: mdin.%(rid) changes to mdin.rep.0009
+    candidate 2: rep.0009: mdin.%(rid) changes to mdin.rep.0003
     '''
 
     import random

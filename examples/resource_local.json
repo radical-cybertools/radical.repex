@@ -1,11 +1,8 @@
 
 {
-    "rmq_host" : "localhost",
-    "rmq_port" : 5672,
-
     "resource" : "local.localhost",
-    "walltime" : 1000,
-    "cpus"     : 128,
+    "walltime" : 60,
+    "cpus"     : 16,
     "pre_exec" : []
 }
 
