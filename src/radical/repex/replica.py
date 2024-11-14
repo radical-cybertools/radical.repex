@@ -11,7 +11,7 @@ from .utils import expand_ln, last_task
 #
 class Replica(re.Pipeline):
     '''
-    A `Replica` is an EnTK pipeline which consists of alternating md and
+    A `Replica` is an EnTK pipeline which consists of alternating MD and
     exchange stages.  The initial setup is for one MD stage - Exchange and more
     MD stages get added depending on runtime conditions.
     '''
@@ -34,7 +34,7 @@ class Replica(re.Pipeline):
         self._prof.prof('create', uid=self._rid)
 
         self._props     = properties
-        self._cycle     = -1    # increased when adding md stage
+        self._cycle     = -1    # increased when adding MD stage
         self._ex_list   = None  # list of replicas used in exchange step
 
         re.Pipeline.__init__(self)
@@ -53,7 +53,7 @@ class Replica(re.Pipeline):
         self._check_ex  = check_ex
         self._check_res = check_res
 
-        # add an initial md stage
+        # add an initial MD stage
         self.add_md_stage(sid=sid)
 
         self._prof.close()  # switch to the global profiler
@@ -112,7 +112,7 @@ class Replica(re.Pipeline):
             prev = last_task(self)
 
             if exchanged_from:
-                # we get data via and exchange step, i.e. from anoth replica
+                # we get data via and exchange step, i.e. from another replica
                 self._log.debug('Exchange from %s', exchanged_from.name)
                 link_inputs += expand_ln(self._workload.md.ex_2_md,
                         'pilot:///%s' % (exchanged_from.sandbox),
@@ -230,7 +230,7 @@ class Replica(re.Pipeline):
     #
     def check_exchange(self):
         '''
-        after an md cycle, record its completion and check for exchange
+        after an MD cycle, record its completion and check for exchange
         '''
 
         self._prof.prof('chk_ex_start', uid=self.rid)

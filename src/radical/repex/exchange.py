@@ -66,7 +66,7 @@ class Exchange(re.AppManager):
             self._replicas = [Replica(workload=self._workload)
                                 for _ in range(self._workload.config.replicas)]
 
-        # initialize all replica pipelines, i.e, create the initial md stages
+        # initialize all replica pipelines, i.e, create the initial MD stages
         for r in self._replicas:
             r._initialize(check_ex=self._check_exchange,
                           check_res=self._check_resume,
@@ -169,10 +169,10 @@ class Exchange(re.AppManager):
     #
     def _check_exchange(self, replica):
 
-        # for this replica, run the selction algorithm and check if this replica
-        # is eligible for an exchange.
+        # for this replica, run the selection algorithm and check if this
+        # replica is eligible for an exchange.
 
-        # method races when concurrently triggered by multpiple replicas
+        # method races when concurrently triggered by multiple replicas
         with self._lock:
 
             # this replica is also eligible for exchange, add it to the waitlist
@@ -262,7 +262,7 @@ class Exchange(re.AppManager):
         # given replica.
         #
         # For all replicas which participated in the exchange,
-        # add a new md stage for them and resume them (do not resume *this*
+        # add a new MD stage for them and resume them (do not resume *this*
         # replica, as it is obviously running).
 
         self._dump()
@@ -276,12 +276,12 @@ class Exchange(re.AppManager):
 
         exchange = last_task(replica)
 
-        # after a successfull exchange we revive all participating replicas.
-        # For those replicas which did not yet reach min cycles, add an md
-        # stage, all others we let die and add a new md stage for them.
+        # after a successful exchange we revive all participating replicas.
+        # For those replicas which did not yet reach min cycles, add an MD
+        # stage, all others we let die and add a new MD stage for them.
         for _replica in replica.exchange_list:
 
-            # add a new md stage for all replicas which did not yet reach the
+            # add a new MD stage for all replicas which did not yet reach the
             # required number of cycles
             if _replica.cycle <= self._cycles:
                 last = bool(_replica.cycle == self._cycles)

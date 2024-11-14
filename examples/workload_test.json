@@ -22,9 +22,9 @@
     # this section defined the science workload, i.e., the MD steps
     "md" : {
             # an MD stage needs the inputs listed here.  Specifically, the
-            # inputs to MD step N in Replica X are sym-linked from a previous
-            # MD step N-1 but from a *different* replica Y.  The echange
-            # pairing [X|Y] is defined at runtime the the selection algorythm.
+            # inputs to MD step N in Replica X are symlinked from a previous
+            # MD step N-1 but from a *different* replica Y.  The exchange
+            # pairing [X|Y] is defined at runtime the selection algorithm.
             #
             # NOTE: The placeholder `%(rid)s` is replaced by the replica ID for
             #       replica *Y*, i.e., the source replica.
@@ -45,7 +45,7 @@
             # only staged back from last cycle (n/a)
             "outputs_n"      : ["outcrd.gro         > outcrd.gro.%(rid)s.last"],
 
-            # Tasks to run for each MD step in the pipelint
+            # Tasks to run for each MD step in the pipeline
             "descriptions"   : [{
                                    "executable"     : "sleep 5; echo",
                                    "arguments"      : [ "grompp",
