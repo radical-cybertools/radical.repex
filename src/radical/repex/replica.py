@@ -97,16 +97,31 @@ class Replica(re.Pipeline):
         sandbox     = '%s.%04d.md' % (self.rid, self.cycle)
         link_inputs = list()
 
-        # link initial data
-        link_inputs += expand_ln(self._workload.md.inputs,
-                     'pilot:///%s' % self._workload.data.inputs,
-                     'task://', self.rid, self.cycle)
+        old_sandbox = None
+        if os.file.exists('previous_run'):
+            data = open('previous_run', 'r').read()
+            old_sandbox = data.strip()
 
-        if self._cycle == 0:
-            # link initial data
-            link_inputs += expand_ln(self._workload.md.inputs_0,
+        # link initial data
+        if old_sandbox:
+            # link from previous sandbox
+            link_inputs += expand_ln(self._workload.md.inputs,... )
+        else:
+            # link new data
+            link_inputs += expand_ln(self._workload.md.inputs,
                          'pilot:///%s' % self._workload.data.inputs,
                          'task://', self.rid, self.cycle)
+
+        if self._cycle == 0:
+
+            # link initial data
+            if old_sandbox:
+                link_inputs += expand_ln(old_sandbox...)
+
+            else:
+                link_inputs += expand_ln(self._workload.md.inputs_0,
+                             'pilot:///%s' % self._workload.data.inputs,
+                             'task://', self.rid, self.cycle)
         else:
             # get data from previous task
             prev = last_task(self)
